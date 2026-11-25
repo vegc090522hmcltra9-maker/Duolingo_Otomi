@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Registro de Usuario</title>
+<link rel="stylesheet" href="otomi.css">
+<style>
+  
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap');
+
+  :root{
+    --verde:#58CC02;
+    --verde-sombra:#46A302;
+    --azul:#1CB0F6;
+    --rosa:#FF4D8D;
+    --amarillo:#FFC800;
+    --naranja:#FF8A00;
+    --morado:#7D5CFF;
+    --crema:#FFF6E5;
+    --cafe:#4A2C1A;
+    --gris:#AFAFAF;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0}
+
+  body{
+    font-family:'Nunito', Arial, sans-serif;
+    background:var(--crema);
+    /* Papel bordado Tenango */
+    background-image:
+      radial-gradient(circle at 25% 25%, #FFD6E8 0 12px, transparent 13px),
+      radial-gradient(circle at 75% 75%, #D6F5FF 0 12px, transparent 13px);
+    background-size:90px 90px;
+    display:flex; justify-content:center; align-items:center;
+    min-height:100vh; padding:20px;
+  }
+
+  /* Tarjeta principal */
+  .card{
+    width:440px; max-width:100%;
+    background:#fff;
+    border-radius:28px;
+    overflow:hidden;
+    position:relative;
+    border:3px solid var(--cafe);
+    box-shadow:0 10px 0 var(--cafe), 0 20px 40px rgba(74,44,26,.25);
+  }
+
+  /* Franja bordada Tenango arriba y abajo - lo más Otomí */
+  .card::before, .card::after{
+    content:"";
+    display:block; height:14px;
+    background:
+      repeating-linear-gradient(45deg, var(--rosa) 0 14px, var(--amarillo) 14px 28px, var(--verde) 28px 42px, var(--azul) 42px 56px, var(--naranja) 56px 70px, var(--morado) 70px 84px);
+  }
+
+  /* Header */
+  .top{
+    background:linear-gradient(135deg, #2E7D32 0%, #58CC02 55%, #89E219 100%);
+    padding:26px 24px 22px;
+    text-align:center;
+    color:white;
+    position:relative;
+    overflow:hidden;
+  }
+  /* Sol otomí de fondo */
+  .top::before{
+    content:"☀";
+    position:absolute; right:12px; top:-10px;
+    font-size:90px; opacity:.18; transform:rotate(15deg);
+  }
+  .top::after{
+    content:"🌸 🐦 🌼 🦋 🌺 🐰 🌸";
+    display:block; font-size:19px; margin-top:12px;
+    background:rgba(255,255,255,.22);
+    padding:7px 10px; border-radius:999px;
+  }
+  .top h1{
+    font-family:'Fredoka', sans-serif;
+    font-size:32px; line-height:1;
+    letter-spacing:.5px;
+    text-shadow:0 3px 0 rgba(0,0,0,.18);
+  }
+  .top p{margin-top:8px; font-size:14px; font-weight:800; opacity:.95}
+  .badge{
+    display:inline-block;
+    background:var(--amarillo); color:#3A2200;
+    padding:6px 14px; border-radius:999px;
+    font-size:11px; font-weight:900; letter-spacing:1px;
+    margin-top:12px;
+    border:2px solid #fff;
+    box-shadow:0 3px 0 #E5A800;
+  }
+
+  /* Barra Duolingo */
+  .progreso{
+    background:#EDEDED; height:16px;
+    border-radius:999px; margin:18px 24px 0;
+    overflow:hidden; border:2px solid #EDEDED;
+    box-shadow:inset 0 2px 0 rgba(0,0,0,.08);
+  }
+  .progreso div{
+    height:100%; width:18%;
+    background:linear-gradient(90deg, var(--rosa), var(--amarillo), var(--verde), var(--azul), var(--morado));
+    border-radius:999px;
+  }
+
+  /* Formulario */
+  .formulario{padding:18px 24px 10px}
+  label{
+    display:block; font-size:11px; font-weight:900;
+    color:#8A8A8A; text-transform:uppercase; letter-spacing:1px;
+    margin-bottom:5px;
+  }
+  input{
+    width:100%; padding:14px 14px 14px 44px;
+    margin-bottom:13px;
+    border:2.5px solid #E5E5E5; border-radius:16px;
+    font-size:15px; font-weight:800; color:#3C3C3C;
+    outline:none; background:#FAFAFA;
+    transition:.15s;
+  }
+  input:focus{
+    border-color:var(--azul); background:white;
+    box-shadow:0 0 0 4px #D7F3FF; transform:scale(1.01);
+  }
+  /* Iconos Otomí en los inputs */
+  input[name="nombre"]{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20'><text y='16'>👤</text></svg>"); background-repeat:no-repeat; background-position:14px center}
+  input[name="email"]{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20'><text y='16'>✉️</text></svg>"); background-repeat:no-repeat; background-position:14px center}
+  input[name="contrasena"]{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20'><text y='16'>🔒</text></svg>"); background-repeat:no-repeat; background-position:14px center}
+  input[name="fecha_nac"]{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20'><text y='16'>📅</text></svg>"); background-repeat:no-repeat; background-position:14px center}
+  input[name="pais"]{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20'><text y='16'>🌎</text></svg>"); background-repeat:no-repeat; background-position:14px center}
+  input[name="nivel"]{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20'><text y='16'>⭐</text></svg>"); background-repeat:no-repeat; background-position:14px center}
+
+  .fila{display:flex; gap:12px}
+  .fila > div{flex:1}
+
+  button{
+    width:100%; padding:15px; margin-top:6px;
+    background:var(--verde); color:white;
+    border:none; border-radius:16px;
+    font-family:'Fredoka', sans-serif;
+    font-size:18px; font-weight:600; letter-spacing:1px;
+    cursor:pointer; text-transform:uppercase;
+    box-shadow:0 6px 0 var(--verde-sombra);
+    transition:.1s;
+  }
+  button:hover{filter:brightness(1.05)}
+  button:active{transform:translateY(5px); box-shadow:0 1px 0 var(--verde-sombra)}
+
+  #mensaje{margin-top:14px; text-align:center; font-weight:900; min-height:22px; font-size:14px}
+
+  /* Footer Otomí */
+  .otomí{
+    display:flex; justify-content:space-between;
+    padding:12px 26px 8px; font-size:24px;
+    filter:drop-shadow(0 2px 0 rgba(0,0,0,.05));
+  }
+  .footer{
+    text-align:center; font-size:12px; color:#9A9A9A;
+    padding:0 20px 18px; font-weight:800; line-height:1.5;
+  }
+  .footer b{color:var(--rosa)}
+  .footer span{color:var(--azul)}
+
+  @media(max-width:480px){
+    .top h1{font-size:28px}
+    .fila{flex-direction:column; gap:0}
+  }
+</style>
+</head>
+<body>
+<div class="formulario">
+    <h2>Registro Usuario</h2>
+    <form id="formRegistro">
+        <input type="text" name="nombre" placeholder="Nombre" required>
+        <input type="email" name="email" placeholder="Correo electrónico" required>
+        <input type="password" name="contrasena" maxlength="6" placeholder="Contraseña" required>
+        <input type="date" name="fecha_nac" required>
+        <input type="text" name="pais" placeholder="País" required>
+        <input type="number" name="nivel" min="1" max="99" placeholder="Nivel" required>
+        <button type="submit">Registrarse</button>
+          <!-- Botón nuevo -->
+    <a href="Leccion1.html" class="btn btn-outline-primary btn-lg ms-2">REGISTRARSE</a>
+    </form>
+    <div id="mensaje"></div>
+</div>
+
+<script>
+document.getElementById("formRegistro").addEventListener("submit", async function(e){
+    e.preventDefault();
+    const datos = {
+        nombre: this.nombre.value,
+        email: this.email.value,
+        contrasena: this.contrasena.value,
+        fecha_nac: this.fecha_nac.value,
+        pais: this.pais.value,
+        nivel: this.nivel.value
+    };
+    try{
+        const respuesta = await fetch("registro.php",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body: JSON.stringify(datos)
+        });
+        const resultado = await respuesta.json();
+        document.getElementById("mensaje").innerHTML = resultado.mensaje;
+        document.getElementById("mensaje").style.color = resultado.estado ? "green" : "red";
+        if(resultado.estado){
+            this.reset();
+        }
+    }catch(error){
+        console.error(error);
+        document.getElementById("mensaje").innerHTML = "Error de conexión";
+    }
+});
+</script>
+</body>
+</html>

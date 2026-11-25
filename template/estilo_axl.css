@@ -1,0 +1,72 @@
+body {
+            font-family: Arial, sans-serif;
+            background: #fffaf5;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            }
+        h3 {
+            color: #6b4c7a;
+            font-size: 32px;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            }
+        h1 {
+            color: #6b4c7a;
+            font-size: 32px;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            }
+        .contenedor {
+                    display: flex;
+                    justify-content: center;
+                    gap: 20px;
+                    flex-wrap: wrap;
+                    }
+        .card {
+                background: white;
+                border: 2px solid #333;
+                border-radius: 16px;
+                width: 180px;
+                padding: 15px;
+                box-shadow: 4px 4px 0px #333;
+                }
+        .card img {
+                    width: 100px;
+                    height: 100px;
+                    object-fit: contain;
+                    background: #f2f2f2;
+                    border-radius: 10px;
+                    }
+        .card button {
+                        margin-top: 10px;
+                        width: 100%;
+                        padding: 8px;
+                        border: 2px solid #333;
+                        border-radius: 8px;
+                        background: #ffe8f0;
+                        font-weight: bold;
+                        cursor: pointer;
+                        }
+        .card button:hover {
+                            background: #ffb6d0;
+                            }
+        .botones-accion {
+                        display: flex;
+                        justify-content: center;
+                        gap: 15px;
+                        margin-top: 20px;
+                        }
+        .botones-accion button {
+                    display: flex;
+                    justify-content: center;
+                    gap: 20px;
+                    padding: 20px;
+                    border: 2px solid #333;
+                    border-radius: 15px;
+                    background: rgb(41, 240, 174);
+                    }
+        .botones-accion button:hover{
+            background: #01ff01;
+        }
+      

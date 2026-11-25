@@ -1,0 +1,590 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Nunito', sans-serif
+}
+
+body {
+    background: #fff;
+    color: #4b4b4b
+}
+
+.hidden {
+    display: none !important
+}
+
+/* ===================== MENÚ INICIAL ===================== */
+#menu {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 16px 40px
+}
+
+.menu-hero {
+    text-align: center;
+    padding: 28px 12px 20px
+}
+
+.menu-hero .cele-mascot {
+    animation: celeJump .8s ease-in-out infinite alternate
+}
+
+.menu-hero .cele-mascot img {
+    width: 120px;
+    height: 120px
+}
+
+.menu-hero h1 {
+    margin: 10px 0 4px;
+    color: #58a700
+}
+
+.menu-hero p {
+    color: #777;
+    font-weight: 800
+}
+
+/* Pestañas */
+.tabs {
+    display: flex;
+    gap: 8px;
+    margin: 8px 0 18px
+}
+
+.tab {
+    flex: 1;
+    background: #fff;
+    border: 2px solid #e5e5e5;
+    border-bottom: 4px solid #e5e5e5;
+    border-radius: 14px;
+    padding: 10px 6px;
+    font-size: 15px;
+    font-weight: 800;
+    color: #777;
+    cursor: pointer
+}
+
+.tab.active {
+    background: #ddf4ff;
+    border-color: #1cb0f6;
+    border-bottom-color: #1899d6;
+    color: #1cb0f6
+}
+
+.panel {
+    display: none
+}
+
+.panel.active {
+    display: block
+}
+
+/* Tarjeta de dato destacado */
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #d7ffb8;
+    border: 2px solid #58cc02;
+    border-radius: 16px;
+    padding: 14px 18px;
+    margin-bottom: 16px
+}
+
+.stat b {
+    font-size: 44px;
+    color: #58a700;
+    line-height: 1
+}
+
+.stat span {
+    font-size: 17px;
+    font-weight: 800;
+    color: #58a700
+}
+
+.info-title {
+    font-size: 20px;
+    margin: 14px 0 10px
+}
+
+.note {
+    font-size: 15px;
+    color: #777;
+    font-weight: 800;
+    margin-top: 12px
+}
+
+/* Fichas de letras */
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px
+}
+
+.chip {
+    min-width: 54px;
+    text-align: center;
+    background: #fff;
+    border: 2px solid #e5e5e5;
+    border-bottom: 4px solid #e5e5e5;
+    border-radius: 14px;
+    padding: 10px 12px;
+    font-size: 24px;
+    font-weight: 800;
+    color: #4b4b4b;
+    cursor: pointer;
+    transition: transform .1s
+}
+
+.chip:active {
+    transform: translateY(2px)
+}
+
+.chip.sel {
+    background: #ddf4ff;
+    border-color: #1cb0f6;
+    border-bottom-color: #1899d6;
+    color: #1cb0f6
+}
+
+.chip.glotal {
+    background: #fff4d6;
+    border-color: #ffc800;
+    border-bottom-color: #e0a800;
+    color: #b58900
+}
+
+.chip.vocal {
+    border-color: #ce82ff;
+    border-bottom-color: #a560d6;
+    color: #9b4fd6
+}
+
+.chip.nasal {
+    border-color: #ff9600;
+    border-bottom-color: #d97d00;
+    color: #d97d00
+}
+
+.chip.semi {
+    border-color: #58cc02;
+    border-bottom-color: #58a700;
+    color: #58a700
+}
+
+.group {
+    border: 2px solid #e5e5e5;
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 12px
+}
+
+.group h3 {
+    font-size: 17px;
+    margin-bottom: 10px
+}
+
+.group h3 small {
+    color: #999;
+    font-weight: 800
+}
+
+.menu-start {
+    position: sticky;
+    bottom: 0;
+    background: #fff;
+    padding: 14px 0 0;
+    margin-top: 20px
+}
+
+.big-btn {
+    width: 100%;
+    background: #58cc02;
+    color: #fff;
+    border: none;
+    border-bottom: 4px solid #58a700;
+    padding: 14px;
+    border-radius: 16px;
+    font-size: 19px;
+    font-weight: 800;
+    cursor: pointer
+}
+
+.big-btn:active {
+    transform: translateY(2px);
+    border-bottom-width: 2px
+}
+
+/* ===================== LECCIÓN ===================== */
+.top {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    padding: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    border-bottom: 2px solid #e5e5e5;
+    z-index: 10
+}
+
+.menu-btn {
+    background: #fff;
+    border: 2px solid #e5e5e5;
+    border-bottom: 4px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 800;
+    color: #777;
+    cursor: pointer;
+    white-space: nowrap
+}
+
+.menu-btn:active {
+    transform: translateY(2px);
+    border-bottom-width: 2px
+}
+
+.progress {
+    flex: 1;
+    height: 16px;
+    background: #e5e5e5;
+    border-radius: 8px;
+    overflow: hidden
+}
+
+.fill {
+    height: 100%;
+    background: #58cc02;
+    width: 0%;
+    transition: width .5s
+}
+
+.wrap {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px 16px 100px
+}
+
+h1 {
+    font-size: 26px;
+    margin: 12px 0 20px
+}
+
+.hl {
+    color: #1cb0f6
+}
+
+.card {
+    border: 2px solid #e5e5e5;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+    font-size: 19px;
+    cursor: pointer;
+    text-align: center
+}
+
+.card.sel {
+    background: #ddf4ff;
+    border-color: #1cb0f6;
+    color: #1cb0f6
+}
+
+.btn {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    padding: 16px;
+    border-top: 2px solid #e5e5e5;
+    display: flex;
+    gap: 10px
+}
+
+button#skip {
+    flex: 1;
+    background: #fff;
+    color: #ff4b4b;
+    border: 2px solid #e5e5e5;
+    border-bottom: 4px solid #e5e5e5;
+    padding: 14px 8px;
+    border-radius: 16px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer
+}
+
+button#skip:active {
+    transform: translateY(2px);
+    border-bottom-width: 2px
+}
+
+button#skip:disabled {
+    color: #bbb;
+    cursor: not-allowed
+}
+
+button#check {
+    flex: 2;
+    background: #58cc02;
+    color: #fff;
+    border: none;
+    border-bottom: 4px solid #58a700;
+    padding: 14px;
+    border-radius: 16px;
+    font-size: 19px;
+    font-weight: 800;
+    cursor: pointer
+}
+
+button#check:disabled {
+    background: #e5e5e5;
+    border-color: #aaa;
+    color: #999;
+    cursor: not-allowed
+}
+
+.feedback {
+    position: fixed;
+    bottom: 80px;
+    left: 0;
+    right: 0;
+    padding: 16px;
+    text-align: center;
+    font-weight: 800;
+    z-index: 20
+}
+
+.good {
+    background: #d7ffb8;
+    color: #58a700
+}
+
+.bad {
+    background: #ffdfe0;
+    color: #ff4b4b
+}
+
+/* Persona con globo de texto */
+.scene {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    margin-bottom: 20px
+}
+
+.person {
+    width: 110px;
+    height: 130px;
+    flex-shrink: 0
+}
+
+.bubble {
+    position: relative;
+    background: #fff;
+    border: 2px solid #e5e5e5;
+    border-radius: 16px;
+    padding: 14px 20px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #4b4b4b;
+    margin-bottom: 40px
+}
+
+.bubble::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    bottom: 16px;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border-left: 2px solid #e5e5e5;
+    border-bottom: 2px solid #e5e5e5;
+    transform: rotate(45deg)
+}
+
+/* ===================== ANIMACIONES ===================== */
+.cele-box {
+    position: fixed;
+    left: 50%;
+    top: 38%;
+    transform: translate(-50%, -50%);
+    z-index: 30;
+    pointer-events: none;
+    text-align: center;
+    animation: celePop 1.2s ease forwards
+}
+
+.cele-mascot {
+    display: inline-block;
+    animation: celeJump .6s ease-in-out infinite alternate;
+    filter: drop-shadow(0 6px 6px rgba(0, 0, 0, .2))
+}
+
+.cele-mascot img {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto
+}
+
+.cele-bubble {
+    background: #fff;
+    border: 3px solid #58cc02;
+    color: #58a700;
+    border-radius: 18px;
+    padding: 10px 20px;
+    font-size: 22px;
+    font-weight: 800;
+    margin-top: 8px;
+    box-shadow: 0 4px 0 #58a700;
+    white-space: nowrap
+}
+
+@keyframes celePop {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -30%) scale(.3)
+    }
+
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.1)
+    }
+
+    30% {
+        transform: translate(-50%, -50%) scale(1)
+    }
+
+    80% {
+        opacity: 1
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -70%) scale(1)
+    }
+}
+
+@keyframes celeJump {
+    0% {
+        transform: translateY(0) rotate(-10deg)
+    }
+
+    100% {
+        transform: translateY(-22px) rotate(10deg)
+    }
+}
+
+.cele-confetti {
+    position: fixed;
+    top: -20px;
+    width: 10px;
+    height: 14px;
+    z-index: 25;
+    pointer-events: none;
+    animation: celeFall linear forwards
+}
+
+@keyframes celeFall {
+    to {
+        transform: translateY(110vh) rotate(720deg)
+    }
+}
+
+.cele-finale {
+    text-align: center;
+    padding-top: 10px
+}
+
+.cele-finale .cele-mascot {
+    animation: celeDance 1s ease-in-out infinite
+}
+
+.cele-finale .cele-mascot img {
+    width: 220px;
+    height: 220px
+}
+
+.cele-finale p {
+    font-size: 20px;
+    color: #777;
+    margin: 8px 0 24px;
+    font-weight: 800
+}
+
+.cele-finale h1 {
+    color: #58a700;
+    animation: celePulse 1.4s ease-in-out infinite
+}
+
+.cele-restart {
+    background: #1cb0f6;
+    color: #fff;
+    border: none;
+    border-bottom: 4px solid #1899d6;
+    padding: 14px 28px;
+    border-radius: 16px;
+    font-size: 19px;
+    font-weight: 800;
+    cursor: pointer
+}
+
+@keyframes celeDance {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(-12deg) scale(1)
+    }
+
+    25% {
+        transform: translateY(-30px) rotate(0) scale(1.1)
+    }
+
+    50% {
+        transform: translateY(0) rotate(12deg) scale(1)
+    }
+
+    75% {
+        transform: translateY(-30px) rotate(0) scale(1.1)
+    }
+}
+
+@keyframes celePulse {
+
+    0%,
+    100% {
+        transform: scale(1)
+    }
+
+    50% {
+        transform: scale(1.06)
+    }
+}
+
+@media (prefers-reduced-motion:reduce) {
+
+    .cele-mascot,
+    .menu-hero .cele-mascot,
+    .cele-finale h1,
+    .cele-confetti {
+        animation: none !important
+    }
+}
+
+/* Botones secundarios de la pantalla final (igual que en estilo1.css) */
+.cele-restart { margin: 4px }
+.cele-restart.sec {
+    background: #fff;
+    color: #1cb0f6;
+    border: 2px solid #e5e5e5;
+    border-bottom: 4px solid #e5e5e5
+}
+#guardado { color: #777; font-weight: 800; padding: 0 12px }

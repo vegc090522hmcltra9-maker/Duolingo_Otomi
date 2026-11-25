@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="otomi.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Perfil · Hñähñu</title>
+<style>
+:root{--bg:#FFF3D6;--fg:#070707;--mut:#4B4166;--line:#E3D2A8;--card:#ffffff;--green:#58cc02;--gd:#58a700;--blue:#1cb0f6;--orange:#ff9600;--red:#ff4b4b;--gold:#ffc800;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#FFF3D6;--fg:#070707;--mut:#4B4166;--line:#E3D2A8;--card:#ffffff;color-scheme:light}}
+:root[data-theme="dark"]{--bg:#FFF3D6;--fg:#070707;--mut:#4B4166;--line:#E3D2A8;--card:#ffffff;color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Nunito","Segoe UI",system-ui,sans-serif;display:flex;flex-direction:column;align-items:center}
+#app{width:100%;max-width:680px;padding:16px 16px 40px}
+.topx{width:100%;max-width:680px;padding:12px 16px 0}
+.hero{display:flex;gap:16px;align-items:center;border-bottom:2px solid var(--line);padding-bottom:20px}
+.av{width:96px;height:96px;border-radius:50%;background:var(--card);border:3px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:3.2rem;cursor:pointer;flex:none}
+.hero input{font:inherit;font-size:1.6rem;font-weight:800;color:#070707 !important;background:transparent;border:2px solid transparent;border-radius:10px;padding:2px 6px;width:100%}
+.hero input:hover,.hero input:focus{border-color:var(--line);outline:0}
+.mut{color:var(--mut);font-size:.9rem;padding-left:6px}
+.picker{display:none;flex-wrap:wrap;gap:8px;margin:14px 0;padding:12px;background:var(--card);border-radius:16px}
+.picker.on{display:flex}
+.picker button{font-size:1.8rem;background:var(--bg);border:2px solid var(--line);border-bottom-width:4px;border-radius:14px;padding:6px 10px;cursor:pointer}
+h2{font-size:1.2rem;margin:26px 0 10px;color:#070707}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.st{border:2px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;gap:10px;align-items:center;background:#fff}
+.st span{font-size:1.7rem}
+.st b{display:block;font-size:1.3rem;color:#070707}
+.st small{color:var(--mut)}
+.card{border:2px solid var(--line);border-radius:16px;padding:14px;background:#fff}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.bar{height:16px;background:var(--line);border-radius:8px;overflow:hidden;margin:10px 0 4px}
+.bar i{display:block;height:100%;background:var(--green);border-radius:8px;transition:width .4s}
+.goal i{background:var(--orange)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.chip{font:inherit;font-weight:800;color:var(--fg);background:var(--bg);border:2px solid var(--line);border-bottom-width:4px;border-radius:12px;padding:6px 14px;cursor:pointer}
+.chip.on{border-color:var(--blue);color:var(--blue)}
+.week{display:flex;gap:8px;align-items:flex-end;height:110px}
+.week div{flex:1;text-align:center;font-size:.75rem;color:var(--mut)}
+.week i{display:block;background:var(--blue);border-radius:6px 6px 0 0;min-height:4px;margin-bottom:4px}
+.btn{font:inherit;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#fff;background:var(--green);border:0;border-bottom:4px solid var(--gd);border-radius:14px;padding:12px 18px;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.sec{color:var(--mut);background:var(--bg);border:2px solid var(--line);border-bottom-width:4px}
+.ach{display:grid;gap:10px}
+.a{display:flex;gap:12px;align-items:center;border:2px solid var(--line);border-radius:16px;padding:10px 14px;background:#fff}
+.a span{font-size:2rem}
+.a.lock{opacity:.45;filter:grayscale(1)}
+.a b{display:block;color:#070707}
+.a small{color:var(--mut)}
+.btns{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+#err{display:none;margin:20px 0;padding:14px;border-radius:14px;background:#ffdfe0;color:#ea2b2b;font-weight:800}
+</style>
+</head>
+<body>
+<div class="topx">
+  <span onclick="location.href='index.html'" style="cursor:pointer;font-size:22px">❌</span>
+</div>
+<div id="app">
+ <div id="err"></div>
+ <div class="hero">
+  <div class="av" id="av" title="Cambiar avatar"></div>
+  <div style="flex:1;min-width:0">
+   <input id="nm" maxlength="50" aria-label="Nombre" disabled>
+   <div class="mut" id="un"></div>
+   <div class="mut" id="jn"></div>
+  </div>
+ </div>
+ <div class="picker" id="pk"></div>
+
+ <h2>Estadísticas</h2>
+ <div class="stats">
+  <div class="st"><span>🔥</span><div><b id="s1">0</b><small>Días de racha</small></div></div>
+  <div class="st"><span>⚡</span><div><b id="s2">0</b><small>XP totales</small></div></div>
+  <div class="st"><span>🏅</span><div><b id="s3">0</b><small>Logros</small></div></div>
+  <div class="st"><span>📅</span><div><b id="s4">0</b><small>Días practicados</small></div></div>
+ </div>
+
+ <h2>Curso actual</h2>
+ <div class="card">
+  <div class="row"><b>🦎 Hñähñu (otomí)</b><span class="mut" id="lv"></span></div>
+  <div class="bar"><i id="cb" style="width:0"></i></div>
+  <small class="mut" id="ct"></small>
+ </div>
+
+ <h2>Meta diaria</h2>
+ <div class="card goal">
+  <div class="row"><b id="gt"></b><span class="mut" id="gp"></span></div>
+  <div class="bar"><i id="gb" style="width:0"></i></div>
+  <div class="chips" id="gc"></div>
+ </div>
+
+ <h2>Actividad de la semana</h2>
+ <div class="card"><div class="week" id="wk"></div></div>
+
+ <div class="btns">
+  <a class="btn" href="leccion1.html">Practicar</a>
+  <a class="btn sec" href="logout.php">Cerrar sesión</a>
+ </div>
+
+ <h2>Logros</h2>
+ <div class="ach" id="ac"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const AV=["🦎","🦅","🌵","🐢","🦋","🐍","🌽","🐇"];
+const MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const LV=[0,50,120,250,450,700,1000,1500];
+
+let D=null;
+let P={av:0,avChanged:false,goal:20};
+
+const pkey=()=>"perfil_hnahnu_v2_"+D.id;
+function loadPrefs(){try{const r=localStorage.getItem(pkey());if(r)P=Object.assign(P,JSON.parse(r))}catch(e){}}
+function savePrefs(){try{localStorage.setItem(pkey(),JSON.stringify(P))}catch(e){}}
+
+function level(){let l=0;while(l+1<LV.length&&D.xp>=LV[l+1])l++;return l}
+
+const ACH=[
+ ["🌱","Primer paso","Gana tu primer XP",()=>D.xp>=10],
+ ["🔥","Racha de 3","Practica 3 días seguidos",()=>D.racha_dias>=3],
+ ["🔥","Racha de 7","Practica 7 días seguidos",()=>D.racha_dias>=7],
+ ["⚡","100 XP","Llega a 100 XP",()=>D.xp>=100],
+ ["💎","500 XP","Llega a 500 XP",()=>D.xp>=500],
+ ["🎯","Meta cumplida","Cumple tu meta diaria",()=>D.hoy_xp>=P.goal],
+ ["🎨","Mi estilo","Toca aquí y elige un avatar",()=>P.avChanged]
+];
+
+function render(){
+ $("av").textContent=AV[P.av]||AV[0];
+ $("nm").value=D.nombre;
+ $("un").textContent="@"+D.email.split("@")[0].toLowerCase();
+ const [y,m]=D.fecha_registro.split("-");
+ $("jn").textContent="Se unió en "+MESES[+m-1]+" de "+y;
+
+ const t=D.hoy_xp,l=level(),n=ACH.filter(a=>a[3]()).length;
+ $("s1").textContent=D.racha_dias;
+ $("s2").textContent=D.xp;
+ $("s3").textContent=n;
+ $("s4").textContent=D.dias_practicados;
+
+ const lo=LV[l],hi=LV[l+1];
+ $("lv").textContent="Nivel "+(l+1);
+ $("cb").style.width=hi?Math.min(100,(D.xp-lo)/(hi-lo)*100)+"%":"100%";
+ $("ct").textContent=hi?(hi-D.xp)+" XP para el nivel "+(l+2):"¡Nivel máximo!";
+
+ $("gt").textContent="Meta: "+P.goal+" XP al día";
+ $("gp").textContent=Math.min(t,P.goal)+" / "+P.goal+(t>=P.goal?" ✅":"");
+ $("gb").style.width=Math.min(100,t/P.goal*100)+"%";
+ $("gc").innerHTML="";
+ [10,20,30,50].forEach(g=>{
+  const b=document.createElement("button");
+  b.className="chip"+(g==P.goal?" on":"");
+  b.textContent=g+" XP";
+  b.onclick=()=>{P.goal=g;savePrefs();render()};
+  $("gc").appendChild(b);
+ });
+
+ const N=["D","L","M","M","J","V","S"];
+ const mx=Math.max(P.goal,...D.semana.map(x=>x.xp));
+ $("wk").innerHTML=D.semana.map(x=>{
+  const [yy,mm,dd]=x.fecha.split("-").map(Number);
+  const letra=N[new Date(yy,mm-1,dd).getDay()];
+  return '<div><i style="height:'+Math.max(4,x.xp/mx*80)+'px"></i>'+letra+'</div>';
+ }).join("");
+
+ $("ac").innerHTML=ACH.map(a=>'<div class="a'+(a[3]()?'':' lock')+'"><span>'+a[0]+'</span><div><b>'+a[1]+'</b><small>'+a[2]+'</small></div></div>').join("");
+ [...$("ac").children].forEach((c,k)=>{
+  if(ACH[k][1]=="Mi estilo"){c.style.cursor="pointer";c.onclick=()=>{$("pk").classList.add("on");window.scrollTo({top:0,behavior:"smooth"})}}
+ });
+}
+
+$("av").onclick=()=>$("pk").classList.toggle("on");
+AV.forEach((e,k)=>{
+ const b=document.createElement("button");
+ b.textContent=e;
+ b.onclick=()=>{P.av=k;P.avChanged=true;$("pk").classList.remove("on");savePrefs();render()};
+ $("pk").appendChild(b);
+});
+
+$("nm").onchange=async()=>{
+ const n=$("nm").value.trim();
+ if(!n){$("nm").value=D.nombre;return}
+ try{
+  const r=await fetch("perfil_actualizar.php",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({nombre:n})});
+  if(r.status===401){location.href="login.html";return}
+  const j=await r.json();
+  if(j.ok){D.nombre=n}else{alert(j.mensaje||"No se pudo guardar");$("nm").value=D.nombre}
+ }catch(e){alert("Error de conexión");$("nm").value=D.nombre}
+};
+
+function mostrarError(msg){const e=$("err");e.textContent=msg;e.style.display="block"}
+
+async function cargar(){
+ try{
+  const r=await fetch("perfil_datos.php",{credentials:"same-origin"});
+  if(r.status===401){location.href="login.html";return}
+  const j=await r.json();
+  if(!j.ok)throw new Error(j.mensaje||"Error");
+  D=j;loadPrefs();
+  $("nm").disabled=false;
+  render();
+ }catch(e){
+  mostrarError("No se pudo cargar tu perfil. Abre la página desde http://localhost/... (no con doble clic) y revisa que Apache y MySQL estén encendidos.");
+ }
+}
+cargar();
+</script>
+</body>
+</html>

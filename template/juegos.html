@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aprende Otomí 🦉 - Todo en 1</title>
+<link rel="stylesheet" href="otomi.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{max-width:480px;margin:auto;background:#fff}
+.cab{padding:12px;display:flex;justify-content:space-between;border-bottom:2px solid #e5e5e5;position:sticky;top:0;background:#fff;z-index:10}
+.prog{height:14px;background:#e5e5e5;border-radius:8px;overflow:hidden;margin:12px}
+.bar{height:100%;background:#58cc02;width:0%;transition:.4s}
+.uni{border:2px solid #e5e5e5;border-radius:16px;padding:14px;margin:12px;cursor:pointer}
+.uni.bloq{opacity:.5;pointer-events:none}
+.card{border:2px solid #e5e5e5;border-radius:16px;padding:10px;text-align:center;cursor:pointer}
+.card.sel{border-color:#1cb0f6;background:#ddf4ff}
+.boton-comprobar{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;width:100%;padding:18px;border:none;background:#58cc02;color:#fff;font-weight:900;font-size:18px;z-index:40;cursor:pointer}
+.modal{position:fixed;inset:0;background:#fff;display:none;flex-direction:column;z-index:30;padding-bottom:70px}
+.modal.activo{display:flex}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.c{height:55px;border:2px solid #ddd;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="cab"><div>❤️ <span id="v">3</span></div><div>⭐ <span id="xp">80</span></div><div>🔥 3</div></div>
+<div class="prog"><div class="bar" id="fill"></div></div>
+
+<div id="menu">
+<h2 style="padding:12px">Aprende Otomí 🌿</h2>
+<div id="listaUni"></div>
+<h2 style="padding:12px">Juegos 🎮 - Aleatorios</h2>
+<div class="grid2" style="padding:0 12px 12px">
+<div class="uni" onclick="abrirJuego('mem')"><center>🧠<br><b>Memorama</b><br><small>cambia</small></center></div>
+<div class="uni" onclick="abrirJuego('sopa')"><center>🔤<br><b>Sopa</b><br><small>cambia</small></center></div>
+<div class="uni" onclick="abrirJuego('ahor')"><center>🎯<br><b>Ahorcado</b><br><small>cambia</small></center></div>
+<div class="uni" onclick="abrirJuego('arr')"><center>👉<br><b>Arrastra</b><br><small>cambia</small></center></div>
+<div class="uni" onclick="abrirJuego('aud')"><center>🔊<br><b>Audio</b><br><small>cambia</small></center></div>
+<div class="uni" onclick="abrirJuego('esc')"><center>✍️<br><b>Escribe</b><br><small>cambia</small></center></div>
+</div>
+<h3 style="padding:12px">Registro 📒</h3><div id="reg" style="padding:0 12px 20px;font-size:13px;color:#666"></div>
+</div>
+
+<div id="sub" style="display:none;padding:12px"><button onclick="volver()" style="border:none;background:#eee;padding:8px 12px;border-radius:20px">← Volver</button><h2 id="titU" style="margin:12px 0"></h2><div id="listaLec"></div></div>
+
+<div class="modal" id="modal">
+<div style="padding:12px;border-bottom:2px solid #eee;display:flex;gap:10px;align-items:center"><button onclick="cerrar()" style="border:none;background:none;font-size:22px">✕</button><div style="flex:1;height:10px;background:#e5e5e5;border-radius:6px"><div id="fill2" class="bar" style="width:0%"></div></div></div>
+<div style="padding:16px;flex:1;overflow:auto"><h2 id="preg"></h2><p onclick="sonar()" style="font-size:24px;margin:10px 0;cursor:pointer">🔊 Escuchar</p><div id="zona" style="margin-top:10px"></div><p id="msg" style="font-weight:800;margin-top:12px"></p></div>
+<button class="boton-comprobar" id="btnCheck" onclick="comprobar()">COMPROBAR</button>
+</div>
+
+<script>
+let vidas=3,xp=parseInt(localStorage.getItem('xp')||80),progreso=parseInt(localStorage.getItem('prog')||0);
+let comp=JSON.parse(localStorage.getItem('comp')||'[]'); let registro=JSON.parse(localStorage.getItem('reg')||'[]');
+let audioAct='',modo='',uniSel=0,lecSel=0,sel='',pts=0;
+let idx=0,pJ=0,sec='',guo=[],vA=5,aud='';
+
+const COL=[
+{n:'ROXA',es:'ROSA',c:'#ffb6c1'},{n:'NARANXA',es:'NARANJA',c:'#ffa500'},
+{n:'BOXO',es:'CAFÉ',c:'#8B4513'},{n:"K'ANGI",es:'AZUL',c:'#87ceeb'},{n:'THENI',es:'ROJO',c:'#ff6b6b'},
+{n:'THO',es:'BLANCO',c:'#ffffff'},{n:'KANGA',es:'VERDE',c:'#90ee90'}
+];
+
+const UNIS=[
+{nom:"1. Colores 🎨",desc:"5 lecciones",lecs:[
+{p:"¿CUAL ES EL ROSA?",cor:"ROXA",op:[]},{p:"¿CUAL ES CAFÉ?",cor:"BOXO",op:[]},
+{p:"Escucha: NARANXA",cor:"NARANXA",op:[]},{p:"¿Cómo se dice AZUL?",cor:"K'ANGI",op:[]},
+{p:"Escribe ROJO",cor:"THENI",tipo:"texto"}
+]},
+{nom:"2. Saludos 👋",desc:"Se desbloquea al terminar Colores",lecs:[]},
+{nom:"3. Familia",desc:"Bloqueada",lecs:[]}
+];
+
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
+function sonar(){ if(!audioAct) return; speechSynthesis.speak(new SpeechSynthesisUtterance(audioAct)); }
+
+function render(){
+UNIS.forEach((u,i)=>{u.bloq=i>0&&!comp.includes(i-1); if(i==0)u.bloq=false; u.lecs.forEach(l=>{ if(!l.tipo) l.op=shuffle(COL).slice(0,3); if(!l.op.find(o=>o.n===l.cor)){ l.op[0]=COL.find(c=>c.n===l.cor); l.op=shuffle(l.op); } }); });
+document.getElementById('listaUni').innerHTML=UNIS.map((u,i)=>`<div class="uni ${u.bloq?'bloq':''}" onclick="${!u.bloq?`abrirSub(${i})`:''}"><h4>${u.bloq?'🔒':comp.includes(i)?'✅':'▶️'} ${u.nom}</h4><small>${comp.includes(i)?'Completada':u.desc}</small></div>`).join('');
+document.getElementById('fill').style.width=progreso+'%'; document.getElementById('v').innerText=vidas; document.getElementById('xp').innerText=xp;
+document.getElementById('reg').innerHTML=registro.length?registro.map(r=>`✅ ${r.fecha} - ${r.nom} - ${r.pts}/5`).join('<br>'):'Aún no hay registros';
+}
+function abrirSub(i){ uniSel=i; document.getElementById('menu').style.display='none'; document.getElementById('sub').style.display='block'; document.getElementById('titU').innerText=UNIS[i].nom; document.getElementById('listaLec').innerHTML=UNIS[i].lecs.map((l,j)=>`<div class="uni" onclick="abrirLec(${j})"><b>Lección ${j+1}</b> - ${l.p}</div>`).join('')||'<p style="padding:12px">Pronto más lecciones</p>'; }
+function volver(){ document.getElementById('sub').style.display='none'; document.getElementById('menu').style.display='block'; }
+function abrirLec(j){ modo='lec'; lecSel=j; pts=0; document.getElementById('modal').classList.add('activo'); document.getElementById('btnCheck').style.display='block'; document.getElementById('btnCheck').innerText='COMPROBAR'; cargar(); }
+function abrirJuego(j){ modo='juego'; window.juego=j; document.getElementById('modal').classList.add('activo'); if(j=='mem') initMem(); if(j=='sopa') initSopa(); if(j=='ahor') initAhor(); if(j=='arr') initArr(); if(j=='aud') initAud(); if(j=='esc') initEsc(); }
+function cerrar(){ document.getElementById('modal').classList.remove('activo'); document.getElementById('sub').style.display='none'; document.getElementById('menu').style.display='block'; render(); }
+
+function cargar(){
+let L=UNIS[uniSel].lecs[lecSel]; document.getElementById('preg').innerText=L.p; document.getElementById('fill2').style.width=(lecSel/5*100)+'%'; audioAct=L.cor; sel=''; document.getElementById('msg').innerText=''; let z=document.getElementById('zona');
+if(L.tipo=='texto'){
+z.innerHTML=`<div style="background:${COL.find(c=>c.n==L.cor)?.c||'#eee'};height:120px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;border:2px solid #ddd">${L.cor} = ${COL.find(c=>c.n==L.cor)?.es}</div>
+<input id="inpTexto" placeholder="Escribe en otomí..." style="width:100%;padding:14px;border:2px solid #ddd;border-radius:12px;margin-top:12px;font-size:18px">`;
+}else{
+z.style.display='grid'; z.style.gridTemplateColumns='1fr 1fr 1fr'; z.style.gap='10px';
+z.innerHTML=L.op.map(o=>`<div class="card" data-v="${o.n}" onclick="elegir(this)"><div style="background:${o.c};height:60px;border-radius:10px;border:1px solid #ddd"></div><h4>${o.n}</h4><small>${o.es}</small></div>`).join('');
+}
+sonar();
+}
+function elegir(el){ document.querySelectorAll('.card').forEach(c=>c.classList.remove('sel')); el.classList.add('sel'); sel=el.dataset.v; audioAct=sel; sonar(); }
+
+function comprobar(){
+if(modo==='juego' && window.juego==='esc'){
+let inp=document.getElementById('inpE'); let v=inp?inp.value.trim().toUpperCase():'';
+if(!v){ document.getElementById('msg').innerText='Escribe algo'; return; }
+let actual=window.ordenEsc[idx];
+if(v===actual.n.toUpperCase()){ pJ+=10; xp+=10; document.getElementById('msg').style.color='#58a700'; document.getElementById('msg').innerText='¡Correcto! ⭐ '+pJ; }
+else{ document.getElementById('msg').style.color='#ff4b4b'; document.getElementById('msg').innerText='Era: '+actual.n+' ⭐ '+pJ; }
+document.getElementById('xp').innerText=xp; localStorage.setItem('xp',xp);
+idx=(idx+1)%window.ordenEsc.length; if(idx===0) window.ordenEsc=shuffle(COL);
+setTimeout(cargarEsc,1200); return;
+}
+let inpTexto=document.getElementById('inpTexto'); if(inpTexto) sel=inpTexto.value.trim();
+if(!sel){ document.getElementById('msg').style.color='#ff4b4b'; document.getElementById('msg').innerText='Elige o escribe primero'; return; }
+let L=UNIS[uniSel].lecs[lecSel]; let ok=sel.toLowerCase().trim()===L.cor.toLowerCase(); let m=document.getElementById('msg');
+if(ok){ m.style.color='#58a700'; m.innerText='¡Correcto! ✅'; xp+=10; pts++; document.getElementById('btnCheck').style.background='#58cc02'; }
+else{ m.style.color='#ff4b4b'; m.innerText='Era: '+L.cor+' 😅 Avanzando...'; vidas--; document.getElementById('btnCheck').style.background='#ff4b4b'; document.getElementById('btnCheck').innerText='CONTINUAR'; }
+setTimeout(()=>{
+lecSel++; progreso=Math.max(progreso,Math.min(100,Math.round((comp.length+lecSel/5)/UNIS.length*100)));
+document.getElementById('v').innerText=vidas; document.getElementById('xp').innerText=xp; document.getElementById('fill').style.width=progreso+'%';
+localStorage.setItem('xp',xp); localStorage.setItem('prog',progreso);
+if(vidas<=0){ alert('Sin vidas'); vidas=3; cerrar(); return; }
+if(lecSel>=UNIS[uniSel].lecs.length){
+if(!comp.includes(uniSel)) comp.push(uniSel);
+registro.unshift({fecha:new Date().toLocaleDateString(),nom:UNIS[uniSel].nom,pts:pts});
+localStorage.setItem('comp',JSON.stringify(comp)); localStorage.setItem('reg',JSON.stringify(registro));
+alert('¡Terminaste! 🎉 '+pts+'/5'); pts=0; cerrar();
+}else{ document.getElementById('btnCheck').innerText='COMPROBAR'; document.getElementById('btnCheck').style.background='#58cc02'; cargar(); }
+},1200);
+}
+
+// --- juegos ---
+//memorama
+function initMem(){
+let base=shuffle(COL).slice(0,4); let arr=shuffle([...base,...base]);
+let z=document.getElementById('zona'); document.getElementById('preg').innerText='Memorama aleatorio';
+z.style.display='grid'; z.style.gridTemplateColumns='repeat(4,1fr)'; z.style.gap='8px';
+z.innerHTML=arr.map((p,i)=>`<div class=c data-v="${p.n}" data-i="${i}" onclick="voltear(this)">?</div>`).join('');
+window.selM=[]; document.getElementById('btnCheck').style.display='none'; document.getElementById('msg').innerText='Encuentra parejas: '+base.map(b=>b.n).join(', ');
+}
+window.voltear=function(el){ if(window.selM.length>=2||el.textContent!=='?') return; el.textContent=el.dataset.v; window.selM.push(el); if(window.selM.length==2){ setTimeout(()=>{ if(window.selM[0].dataset.v==window.selM[1].dataset.v && window.selM[0].dataset.i!=window.selM[1].dataset.i){ window.selM[0].style.background='#d9ffb3'; window.selM[1].style.background='#d9ffb3'; } else { window.selM[0].textContent='?'; window.selM[1].textContent='?'; } window.selM=[]; },700) } }
+
+//sopa de letras
+function initSopa(){
+let palabras=shuffle(COL).slice(0,3).map(c=>c.n.replace("'",""));
+let grid=Array(64).fill(0).map(()=>String.fromCharCode(65+Math.random()*26|0));
+palabras.forEach((p,i)=>{ for(let j=0;j<p.length;j++) grid[i*8+j]=p[j]; });
+let z=document.getElementById('zona'); document.getElementById('preg').innerText='Sopa aleatoria';
+z.style.display='grid'; z.style.gridTemplateColumns='repeat(8,1fr)'; z.style.gap='4px';
+z.innerHTML=grid.map(l=>`<div class=c style="height:40px" onclick="this.style.background=this.style.background?'':'#58cc02';this.style.color=this.style.background?'#fff':''">${l}</div>`).join('');
+document.getElementById('btnCheck').style.display='none'; document.getElementById('msg').innerText='Busca: '+palabras.join(', ');
+}
+
+//ahorcado
+function initAhor(){
+let elegido=shuffle(COL)[0]; sec=elegido.n; guo=sec.split('').map(c=>c=="'"?"'":"_"); vA=5;
+document.getElementById('preg').innerText='Ahorcado aleatorio'; let z=document.getElementById('zona');
+z.innerHTML=`<h1 id="pal" style="letter-spacing:6px">${guo.join(' ')}</h1><div id="let" style="margin:10px 0"></div><p id="va">${'❤️'.repeat(vA)}</p>`;
+document.getElementById('let').innerHTML="ABCDEFGHI'".split('').map(l=>`<button onclick="proA('${l}',this)" style="margin:2px;padding:6px;border-radius:8px;border:2px solid #ddd">${l}</button>`).join('');
+document.getElementById('btnCheck').style.display='none'; document.getElementById('msg').innerText='Pista: '+elegido.es;
+}
+window.proA=function(l,btn){ btn.disabled=true; if(sec.includes(l)){ sec.split('').forEach((c,i)=>{if(c==l) guo[i]=l}); document.getElementById('pal').textContent=guo.join(' '); if(!guo.includes('_')){ alert('Ganaste: '+sec); initAhor(); } } else { vA--; document.getElementById('va').textContent='❤️'.repeat(vA); if(vA==0){ alert('Era: '+sec); initAhor(); } } }
+
+//arrasta
+function initArr(){
+let base=shuffle(COL).slice(0,4); document.getElementById('preg').innerText='Arrastra aleatorio';
+let z=document.getElementById('zona'); z.innerHTML=`<div style="display:flex;gap:8px"><div id="co" style="flex:1"></div><div id="ce" style="flex:1"></div></div>`;
+document.getElementById('co').innerHTML=base.map(p=>`<div class="card" draggable=true data-v="${p.n}" ondragstart="event.dataTransfer.setData('text',this.dataset.v)" style="margin:6px 0">${p.n}</div>`).join('');
+document.getElementById('ce').innerHTML=shuffle(base).map(p=>`<div class="card" data-o="${p.n}" ondragover="event.preventDefault()" ondrop="dropA(event,this)" style="margin:6px 0">${p.es}</div>`).join('');
+document.getElementById('btnCheck').style.display='none'; document.getElementById('msg').innerText='Une: '+base.map(b=>b.n).join(', ');
+}
+window.dropA=function(e,el){ let v=e.dataTransfer.getData('text'); if(v==el.dataset.o){ el.style.background='#d9ffb3'; el.innerHTML='✅ '+v } else { el.style.background='#ffcccc'; setTimeout(()=>el.style.background='',400) } }
+
+//audio
+function initAud(){
+let lista=shuffle(COL).slice(0,4); aud=lista[Math.floor(Math.random()*lista.length)].n; audioAct=aud;
+document.getElementById('preg').innerText='Audio aleatorio 🔊'; let z=document.getElementById('zona');
+z.style.display='grid'; z.style.gap='8px'; z.innerHTML=lista.map(p=>`<div class="card" data-v="${p.n}" onclick="elegirAud(this)" style="margin:6px 0"><b>${p.n}</b> - ${p.es}</div>`).join('');
+document.getElementById('btnCheck').style.display='none'; document.getElementById('msg').innerText=''; sonar();
+}
+window.elegirAud=function(el){ let v=el.dataset.v; let m=document.getElementById('msg'); if(v==aud){ m.style.color='#58a700'; m.innerText='¡Correcto!'; xp+=5; document.getElementById('xp').innerText=xp; localStorage.setItem('xp',xp); setTimeout(initAud,800) } else { m.style.color='#ff4b4b'; m.innerText='Era: '+aud; setTimeout(initAud,800) } }
+
+//escibe
+function initEsc(){ window.ordenEsc=shuffle(COL); idx=0; pJ=0; cargarEsc(); }
+function cargarEsc(){
+let actual=window.ordenEsc[idx]; let z=document.getElementById('zona'); document.getElementById('preg').innerText='Escribe aleatorio';
+z.innerHTML=`<div style="background:${actual.c};height:100px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;border:2px solid #ddd;color:${actual.c==='#8B4513'||actual.c==='#ffffff'?'#000':'#000'}">${actual.es}</div><input id="inpE" placeholder="Escribe en otomí..." style="width:100%;padding:12px;border:2px solid #ddd;border-radius:12px;margin-top:10px;font-size:18px">`;
+document.getElementById('msg').innerText='⭐ '+pJ+' - '+(idx+1)+'/'+window.ordenEsc.length; document.getElementById('btnCheck').style.display='block'; document.getElementById('btnCheck').innerText='COMPROBAR'; document.getElementById('btnCheck').style.background='#58cc02';
+}
+
+render();
+</script>
+</body>
+</html>

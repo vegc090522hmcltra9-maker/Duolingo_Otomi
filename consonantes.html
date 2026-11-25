@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <link rel="stylesheet" href="otomi.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duolingo Otomí - Alfabeto y consonantes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilo2.css">
+</head>
+
+<body>
+
+    <!-- ===================== MENÚ INICIAL ===================== -->
+    <div id="menu">
+        <a class="back-btn" href="men_lecc.html">← Volver al inicio</a>
+        <div class="menu-hero">
+            <div class="cele-mascot"><img src="img/mascota.jpg" alt="Mascota"></div>
+            <h1>El alfabeto otomí</h1>
+            <p>Hñähñu · norma del INALI</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-p="p1">Consonantes</button>
+            <button class="tab" data-p="p2">Otros elementos</button>
+        </div>
+
+        <!-- Panel 1: consonantes -->
+        <div class="panel active" id="p1">
+            <div class="stat"><b>22</b><span>consonantes oficiales según la norma del INALI</span></div>
+            <h2 class="info-title">Lista de consonantes</h2>
+            <div class="chips" id="chipsCons"></div>
+            <p class="note">El apóstrofo ( ' ) representa la oclusión glotal. Toca una letra para seleccionarla.</p>
+        </div>
+
+        <!-- Panel 2: semiconsonantes y vocales -->
+        <div class="panel" id="p2">
+            <div class="group">
+                <h3>Semiconsonantes <small>(2)</small></h3>
+                <div class="chips" id="chipsSemi"></div>
+            </div>
+            <div class="group">
+                <h3>Vocales <small>(14)</small></h3>
+                <h3 style="margin-top:6px"><small>Orales (9)</small></h3>
+                <div class="chips" id="chipsOrales"></div>
+                <h3 style="margin-top:14px"><small>Nasales (5)</small></h3>
+                <div class="chips" id="chipsNasales"></div>
+            </div>
+        </div>
+
+        <div class="menu-start"><button class="big-btn" id="start">COMENZAR LECCIÓN</button></div>
+    </div>
+
+    <!-- ===================== LECCIÓN ===================== -->
+    <div id="lesson" class="hidden">
+        <div class="top">
+            <button class="menu-btn" id="exit" aria-label="Volver al menú" >🏠 MENÚ</button>
+            <div class="progress">
+                <div class="fill" id="fill"></div>
+            </div>
+            <div>❤️ <span id="lives">5</span></div>
+        </div>
+        <div class="wrap" id="app"></div>
+        <div class="btn"><button id="skip">SALTAR (−1 ❤️)</button><button id="check" disabled>COMPROBAR</button></div>
+    </div>
+
+    <script src="progreso.js"></script>
+    <script>
+        // ===================== DATOS DEL MENÚ =====================
+        const CONSONANTES = ['b', 'ch', 'd', 'f', 'g', 'h', 'j', 'k', 'kj', 'l', 'm', 'n', 'ñ', 'p', 'r', 's', 't', 'th', 'ts', 'x', 'z', "'"];
+        const SEMI = ['u/w', 'y'];
+        const ORALES = ['a', 'e', 'i', 'o', 'u', 'a', 'e', 'o', 'u']; // tal como aparece en la fuente
+        const NASALES = ['ä', 'ë', 'ï', 'ö', 'ü'];
+
+        function chips(id, arr, cls = '') {
+            document.getElementById(id).innerHTML = arr.map(l =>
+                `<div class="chip ${cls}${l === "'" ? ' glotal' : ''}">${l}</div>`).join('');
+        }
+        chips('chipsCons', CONSONANTES);
+        chips('chipsSemi', SEMI, 'semi');
+        chips('chipsOrales', ORALES, 'vocal');
+        chips('chipsNasales', NASALES, 'nasal');
+
+        // Seleccionar ficha
+        document.querySelectorAll('.chip').forEach(c => c.onclick = () => {
+            document.querySelectorAll('.chip.sel').forEach(x => x.classList.remove('sel'));
+            c.classList.add('sel');
+        });
+
+        // Pestañas
+        document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
+            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            document.getElementById(t.dataset.p).classList.add('active');
+        });
+
+        // Menú <-> lección
+        document.getElementById('start').onclick = () => {
+            document.getElementById('menu').classList.add('hidden');
+            document.getElementById('lesson').classList.remove('hidden');
+            lvl = 0; lives = 5; puntos = 0;
+            list = [...PREGUNTAS].sort(() => Math.random() - .5).slice(0, 8);
+            render();
+        };
+        document.getElementById('exit').onclick = () => location.href = 'men_lecc.html';
+
+        // ===================== PREGUNTAS DE LA LECCIÓN =====================
+        // q: pregunta (lo que va entre ** se resalta) | a: respuesta correcta | o: distractores | e: explicación
+        const PREGUNTAS = [
+            { q: '¿Cuántas **consonantes** oficiales tiene el alfabeto otomí?', a: '22', o: ['18', '26', '14'], e: 'Son 22 según el INALI' },
+            { q: '¿Qué institución establece la **norma** del alfabeto otomí?', a: 'INALI', o: ['INEGI', 'SEP', 'INAH'], e: 'Es el INALI' },
+            { q: '¿Qué representa el **apóstrofo** ( \' ) en otomí?', a: 'La oclusión glotal', o: ['Una vocal nasal', 'Una semiconsonante', 'Una pausa escrita'], e: 'Representa la oclusión glotal' },
+            { q: '¿Cuál de estas letras **NO** está en la lista de consonantes?', a: 'q', o: ['kj', 'th', 'ts'], e: 'La q no es consonante otomí' },
+            { q: '¿Cuál de estas consonantes se escribe con **dos letras**?', a: 'kj', o: ['b', 'm', 'z'], e: 'Es kj' },
+            { q: '¿Cuántas **semiconsonantes** tiene el alfabeto otomí?', a: '2', o: ['1', '4', '5'], e: 'Son 2: u/w y y' },
+            { q: '¿Cuáles son las **semiconsonantes**?', a: 'u/w y y', o: ['b y d', 'h y j', 'ñ y x'], e: 'Son u/w y y' },
+            { q: '¿Cuántas **vocales** tiene el alfabeto otomí?', a: '14', o: ['5', '9', '22'], e: 'Son 14 (9 orales y 5 nasales)' },
+            { q: '¿Cuántas vocales **nasales** hay?', a: '5', o: ['9', '2', '14'], e: 'Son 5' },
+            { q: '¿Cuál de estas es una vocal **nasal**?', a: 'ë', o: ['a', 'e', 'u'], e: 'Es ë' },
+            { q: '¿Cuántas vocales **orales** hay?', a: '9', o: ['5', '14', '22'], e: 'Son 9' },
+            { q: '¿Cómo se llama el idioma otomí en **otomí**?', a: 'Hñähñu', o: ['Nahuatl', 'Mazahua', 'Hñuhmu'], e: 'Es hñähñu' }
+        ];
+
+        // ===================== ANIMACIONES (igual que la lección de colores) =====================
+        const MASCOT_IMG = '../img/f.png';
+        const FRASES = ['¡Muy bien!', '¡Excelente!', '¡Lo lograste!', '¡Increíble!', '¡Perfecto!', '¡Sigue así!', '¡Eres un crack!', '¡Qué bárbaro!', '¡Fantástico!', '¡Dá ra ma ts’ïnt’ï! 🌟'];
+        const FRASES_FINAL = ['¡Felicidades!', '¡Eres increíble!', '¡Lección completada!'];
+        const COLORES_CONFETI = ['#58cc02', '#1cb0f6', '#ffc800', '#ff4b4b', '#ce82ff', '#ff9600'];
+
+        function mascotHTML() {
+            return `<div class="cele-mascot"><img src="${MASCOT_IMG}" alt="¡Felicidades!"></div>`;
+        }
+
+        function confetti(n = 30) {
+            for (let i = 0; i < n; i++) {
+                const c = document.createElement('div');
+                c.className = 'cele-confetti';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.background = COLORES_CONFETI[Math.floor(Math.random() * COLORES_CONFETI.length)];
+                c.style.animationDuration = (1.5 + Math.random() * 1.5) + 's';
+                c.style.animationDelay = (Math.random() * .4) + 's';
+                document.body.appendChild(c);
+                setTimeout(() => c.remove(), 3600);
+            }
+        }
+
+        function celebrate() {
+            const frase = FRASES[Math.floor(Math.random() * FRASES.length)];
+            const el = document.createElement('div');
+            el.className = 'cele-box';
+            el.innerHTML = mascotHTML() + `<div class="cele-bubble">${frase}</div>`;
+            document.body.appendChild(el);
+            confetti(24);
+            setTimeout(() => el.remove(), 1250);
+        }
+
+        function finaleAnimation() {
+            // (el guardado se hace más abajo, cuando ya existe el aviso en pantalla)
+            try { const d = JSON.parse(localStorage.getItem('otomi_done') || '[]'); if (!d.includes('alfabeto')) { d.push('alfabeto'); localStorage.setItem('otomi_done', JSON.stringify(d)); } } catch (e) { }
+            const app = document.getElementById('app');
+            const titulo = app.innerHTML;
+            app.innerHTML = `<div class="cele-finale">${mascotHTML()}${titulo}
+            <p>${FRASES_FINAL[Math.floor(Math.random() * FRASES_FINAL.length)]}</p>
+<p id="guardado" style="font-size:16px">Guardando tu progreso…</p>
+            <button class="cele-restart" onclick="location.reload()">PRACTICAR DE NUEVO</button>
+            <button class="cele-restart sec" onclick="location.href='men_lecc.html'">VOLVER AL MENÚ</button>
+            <button class="cele-restart sec" onclick="location.href='Perfil.html'">VER MI PERFIL</button></div>`;
+            guardarYMostrar('alfabeto', puntos);   // suma el XP en la base de datos y lo muestra
+            confetti(60);
+            let rondas = 0;
+            const t = setInterval(() => { confetti(35); if (++rondas >= 4) clearInterval(t); }, 900);
+        }
+
+        // ===================== LÓGICA DE LA LECCIÓN =====================
+        let lvl = 0, lives = 5, list = [], puntos = 0;   // puntos = XP ganado en esta lección
+
+        function render() {
+            document.getElementById('fill').style.width = (lvl / list.length * 100) + '%';
+            document.getElementById('lives').innerText = lives;
+
+            if (lvl >= list.length) {
+                document.getElementById('app').innerHTML = '<h1>¡Terminaste! 🎉<br>Ya conoces el alfabeto otomí</h1>';
+                finaleAnimation();
+                document.querySelector('.btn').style.display = 'none';
+                return;
+            }
+
+            const v = list[lvl];
+            const pregunta = v.q.replace(/\*\*(.+?)\*\*/g, '<span class="hl">$1</span>');
+
+            document.getElementById('app').innerHTML = `
+            <h1>Alfabeto otomí</h1>
+            <div class="scene">
+                <svg class="person" viewBox="0 0 110 130" xmlns="http://www.w3.org/2000/svg" aria-label="Mujer otomí">
+                    <path d="M10 130 Q10 84 55 84 Q100 84 100 130 Z" fill="#fff" stroke="#d9d9d9" stroke-width="2"/>
+                    <rect x="48" y="70" width="14" height="18" fill="#b87a48"/>
+                    <path d="M30 93 Q55 112 80 93" stroke="#e63946" stroke-width="4" fill="none" stroke-linecap="round"/>
+                    <circle cx="36" cy="98" r="4" fill="#ff5fa2"/><circle cx="46" cy="105" r="4" fill="#ff9600"/>
+                    <circle cx="55" cy="107" r="4" fill="#1cb0f6"/><circle cx="64" cy="105" r="4" fill="#ff9600"/>
+                    <circle cx="74" cy="98" r="4" fill="#ff5fa2"/>
+                    <circle cx="41" cy="102" r="2" fill="#58cc02"/><circle cx="69" cy="102" r="2" fill="#58cc02"/>
+                    <circle cx="28" cy="120" r="4" fill="#ff5fa2"/><circle cx="28" cy="120" r="1.5" fill="#ffd900"/>
+                    <path d="M22 124 Q25 118 28 124" fill="#58cc02"/>
+                    <circle cx="82" cy="120" r="4" fill="#ff9600"/><circle cx="82" cy="120" r="1.5" fill="#ffd900"/>
+                    <path d="M76 124 Q79 118 82 124" fill="#58cc02"/>
+                    <path d="M30 46 Q18 82 30 114" stroke="#1f1712" stroke-width="10" fill="none" stroke-linecap="round"/>
+                    <path d="M80 46 Q92 82 80 114" stroke="#1f1712" stroke-width="10" fill="none" stroke-linecap="round"/>
+                    <rect x="25" y="110" width="10" height="9" rx="2" fill="#e63946"/>
+                    <rect x="75" y="110" width="10" height="9" rx="2" fill="#e63946"/>
+                    <circle cx="55" cy="48" r="27" fill="#c68b59"/>
+                    <path d="M27 48 Q27 15 55 15 Q83 15 83 48 Q72 28 55 28 Q38 28 27 48 Z" fill="#1f1712"/>
+                    <path d="M55 15 L55 28" stroke="#c68b59" stroke-width="1.5"/>
+                    <circle cx="44" cy="52" r="3" fill="#1f1712"/><circle cx="66" cy="52" r="3" fill="#1f1712"/>
+                    <circle cx="38" cy="60" r="4" fill="#e8836b" opacity=".45"/><circle cx="72" cy="60" r="4" fill="#e8836b" opacity=".45"/>
+                    <path d="M46 64 Q55 72 64 64" stroke="#7a3b25" stroke-width="3" fill="none" stroke-linecap="round"/>
+                </svg>
+                <div class="bubble">${pregunta}</div>
+            </div>
+            <div id="opts"></div>
+        `;
+
+            const opts = [v.a, ...v.o].sort(() => Math.random() - .5);
+            document.getElementById('opts').innerHTML = opts.map((o, i) => `<div class="card" data-i="${i}"></div>`).join('');
+            document.querySelectorAll('.card').forEach((c, i) => c.textContent = opts[i]);
+
+            let sel = '';
+            document.querySelectorAll('.card').forEach(c => c.onclick = () => {
+                document.querySelectorAll('.card').forEach(x => x.classList.remove('sel'));
+                c.classList.add('sel');
+                sel = c.textContent;
+                document.getElementById('check').disabled = false;
+            });
+
+            // Saltar: pierde una vida y la pregunta vuelve al final de la lista.
+            // No se puede saltar la última pregunta pendiente.
+            const skip = document.getElementById('skip');
+            skip.disabled = lvl >= list.length - 1;
+            skip.onclick = () => {
+                const fb = document.createElement('div');
+                fb.className = 'feedback bad';
+                fb.innerText = 'Saltaste · Era: ' + v.a + ' · −1 ❤️';
+                document.body.appendChild(fb);
+                skip.disabled = true;
+                document.getElementById('check').disabled = true;
+                lives--;
+                list.push(list.splice(lvl, 1)[0]);
+                setTimeout(() => {
+                    fb.remove();
+                    if (lives <= 0) { alert('Sin vidas'); lives = 5; lvl = 0; puntos = 0 }
+                    render();
+                }, 1200);
+            };
+
+            document.getElementById('check').onclick = () => {
+                const ok = sel === v.a;
+                const fb = document.createElement('div');
+                fb.className = 'feedback ' + (ok ? 'good' : 'bad');
+                fb.innerText = ok ? '¡Bien! ' + v.e : 'Era: ' + v.a + ' — ' + v.e;
+                document.body.appendChild(fb);
+                if (ok) { celebrate(); puntos += 10; }   // +10 XP por acierto
+                setTimeout(() => {
+                    fb.remove();
+                    if (ok) { lvl++ } else { lives--; if (lives <= 0) { alert('Sin vidas'); lives = 5; lvl = 0; puntos = 0 } }
+                    render();
+                }, 1200);
+                document.getElementById('check').disabled = true;
+                skip.disabled = true;
+            };
+        }
+    </script>
+</body>
+
+</html>

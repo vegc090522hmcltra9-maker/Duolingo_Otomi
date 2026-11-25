@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <link rel="stylesheet" href="otomi.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unidad 1 - Colores</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;font-family:'Nunito',Arial,sans-serif}
+body{margin:0;background:#fff;color:#3c3c3c}
+.topbar{display:flex;align-items:center;gap:14px;max-width:900px;margin:14px auto;padding:0 14px}
+.barra{flex:1;height:16px;background:#e5e5e5;border-radius:10px;overflow:hidden}
+#fill{height:100%;background:#58cc02;width:0%;transition:.5s}
+.stats{font-weight:900;display:flex;gap:12px;font-size:18px;white-space:nowrap}
+.contenido{max-width:900px;margin:0 auto;padding:0 16px;min-height:420px}
+.contenedor{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.card{border:2px solid #e5e5e5;border-radius:20px;padding:0;overflow:hidden;text-align:center;cursor:pointer;background:#fff;box-shadow:0 3px 0 #e5e5e5;transition:.2s}
+.card:hover{transform:translateY(-3px)}
+.card.seleccionada{border-color:#1cb0f6;background:#ddf4ff;box-shadow:0 3px 0 #1cb0f6;transform:scale(1.02)}
+.card .color-box{height:130px;display:flex;align-items:center;justify-content:center;font-size:60px}
+.card strong{color:#1cb0f6;font-size:22px;display:block;margin:14px 0 16px;letter-spacing:.5px}
+.opcion{border:2px solid #e5e5e5;border-radius:16px;padding:16px;text-align:center;cursor:pointer;font-weight:900;font-size:20px;margin-bottom:12px;background:#fff}
+.opcion.seleccionada{border-color:#1cb0f6;background:#ddf4ff;color:#1cb0f6}
+.botones{display:flex;gap:14px;max-width:900px;margin:20px auto;padding:0 16px}
+button{padding:14px;border-radius:14px;border:2px solid #e5e5e5;font-weight:800;cursor:pointer;background:#fff;font-size:16px}
+.verde{flex:1;background:#58cc02;color:#fff;border-color:#58a700;box-shadow:0 4px 0 #58a700}
+.verde:disabled{background:#ccc;border-color:#aaa;box-shadow:none}
+#mensaje{max-width:900px;margin:10px auto;text-align:center;font-weight:900;padding:14px;border-radius:12px;display:none}
+.btn-audio{font-size:50px;cursor:pointer;background:#ddf4ff;border:2px solid #1cb0f6;border-radius:50%;width:90px;height:90px;display:flex;align-items:center;justify-content:center;margin:20px auto}
+@media(max-width:600px){.contenedor{grid-template-columns:1fr}.stats{font-size:14px}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span onclick="location.href='index.html'" style="cursor:pointer;font-size:22px">❌</span>
+  <div class="barra"><div id="fill"></div></div>
+  <div class="stats"><span id="vidasTxt">❤️ 5</span><span>⚡ <span id="puntaje">0/100</span> XP</span><span>🔥 <span id="racha">0</span></span></div>
+</div>
+
+<div class="contenido" id="juego">
+  <p id="etiqueta" style="color:#afafaf;font-weight:800;margin-bottom:0">Pregunta 1 de 6</p>
+  <h1 id="titulo" style="margin-top:4px"></h1>
+  <div id="zonaAudio"></div>
+  <div id="contenedor"></div>
+  <div id="mensaje"></div>
+</div>
+
+<div class="botones">
+  <button onclick="saltar()">Saltar ⏭️</button>
+  <button class="verde" id="btnComprobar" onclick="comprobar()">COMPROBAR</button>
+</div>
+
+<audio id="player"></audio>
+
+<script>
+const COLORES = [
+ {es:'Morado',ot:'KJUFÖI',audio:'kjuföi',color:'#8E44AD',emoji:'💜'},
+ {es:'Verde',ot:"K'APAXI",audio:"k'apaxi",color:'#27AE60',emoji:'💚'},
+ {es:'Café',ot:'BOXO',audio:'boxo',color:'#7B4B26',emoji:'🤎'},
+ {es:'Blanco',ot:"T'AXI",audio:"t'axi",color:'#F5F5F5',emoji:'🤍'},
+ {es:'Amarillo',ot:"K'AXTI",audio:"k'axti",color:'#F1C40F',emoji:'💛'},
+ {es:'Azul',ot:"K'ANGI",audio:"k'angi",color:'#2E86DE',emoji:'💙'},
+ {es:'Rosa',ot:'ROXA',audio:'Roxa',color:'#FF6B9D',emoji:'💖'},
+ {es:'Naranja',ot:'NARANXA',audio:'naranxa',color:'#FF7F00',emoji:'🧡'},
+ {es:'Negro',ot:"BOT'I",audio:"bot'i",color:'#2C3E50',emoji:'🖤'},
+ {es:'Rojo',ot:'THENI',audio:'theni',color:'#E74C3C',emoji:'❤️'}
+];
+
+const PREGUNTAS = [
+ {tipo:'imagen', titulo:'¿CUÁL DE ESTOS ES EL ROSA?', correcta:'Rosa'},
+ {tipo:'texto', titulo:'¿CÓMO SE DICE AZUL EN OTOMÍ?', correcta:'Azul'},
+ {tipo:'imagen', titulo:'¿CUÁL DE ESTOS ES EL ROJO?', correcta:'Rojo'},
+ {tipo:'audio', titulo:'ESCUCHA Y ELIGE LO QUE OÍSTE', correcta:'Verde', audio:"k'apaxi"},
+ {tipo:'texto', titulo:'¿CÓMO SE DICE AMARILLO EN OTOMÍ?', correcta:'Amarillo'},
+ {tipo:'imagen', titulo:'¿CUÁL DE ESTOS ES EL NEGRO?', correcta:'Negro'},
+];
+
+let indice = 0, seleccion = null, puntaje = 0, racha = 0, vidas = 5, correctas = 0, respondido = false;
+const MAX_EXP = 100;
+const shuffle = a => [...a].sort(()=>Math.random()-0.5);
+
+function reproducir(n){
+  const p=document.getElementById('player');
+  p.src=`./audio/${n}.ogg`;
+  p.play().catch(()=>{p.src=`./audio/${n}.mp3`;p.play().catch(()=>{})});
+}
+
+function crearCard(c){
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.innerHTML = `<div class="color-box" style="background:${c.color}">${c.emoji}</div><strong>${c.ot}</strong>`;
+  div.addEventListener('click', () => seleccionar(div, c.es, c.audio));
+  return div;
+}
+function crearOpcion(texto){
+  const div = document.createElement('div');
+  div.className = 'opcion';
+  div.textContent = texto;
+  div.addEventListener('click', () => seleccionar(div, texto, null));
+  return div;
+}
+
+function cargarPregunta(){
+  seleccion=null; respondido=false;
+  document.getElementById('btnComprobar').textContent='COMPROBAR';
+  document.getElementById('btnComprobar').disabled=false;
+  const m=document.getElementById('mensaje'); m.style.display='none';
+  const q=PREGUNTAS[indice];
+  document.getElementById('etiqueta').textContent=`Pregunta ${indice+1} de ${PREGUNTAS.length}`;
+  document.getElementById('titulo').textContent=q.titulo;
+  document.getElementById('fill').style.width=(indice/PREGUNTAS.length*100)+'%';
+  const cont=document.getElementById('contenedor');
+  const zona=document.getElementById('zonaAudio');
+  cont.innerHTML='';
+
+  if(q.tipo==='imagen'){
+    zona.innerHTML='';
+    const correcta=COLORES.find(c=>c.es===q.correcta);
+    const inc=shuffle(COLORES.filter(c=>c.es!==q.correcta)).slice(0,2);
+    const ops=shuffle([correcta,...inc]);
+    cont.className='contenedor';
+    ops.forEach(c=>cont.appendChild(crearCard(c)));
+  }
+  if(q.tipo==='texto'){
+    zona.innerHTML='';
+    let correctaOt = COLORES.find(c=>c.es===q.correcta).ot;
+    const inc=shuffle(COLORES.filter(c=>c.ot!==correctaOt)).slice(0,3).map(c=>c.ot);
+    const ops=shuffle([correctaOt,...inc]);
+    cont.className='';
+    ops.forEach(o=>cont.appendChild(crearOpcion(o)));
+    q._correctaReal = correctaOt;
+  }
+  if(q.tipo==='audio'){
+    const btn = document.createElement('div');
+    btn.className='btn-audio';
+    btn.textContent='🔊';
+    btn.addEventListener('click', ()=>reproducir(q.audio));
+    zona.innerHTML=`<p style="text-align:center;color:#888">Toca para escuchar</p>`;
+    zona.prepend(btn);
+    const correcta=COLORES.find(c=>c.es===q.correcta);
+    const inc=shuffle(COLORES.filter(c=>c.es!==q.correcta)).slice(0,2);
+    const ops=shuffle([correcta,...inc]);
+    cont.className='contenedor';
+    ops.forEach(c=>cont.appendChild(crearCard(c)));
+    setTimeout(()=>reproducir(q.audio),400);
+  }
+}
+
+function seleccionar(card, valor, audio){
+  if(respondido) return;
+  document.querySelectorAll('.card,.opcion').forEach(c=>c.classList.remove('seleccionada'));
+  card.classList.add('seleccionada');
+  seleccion=valor;
+  if(audio) reproducir(audio);
+}
+
+async function guardarProgreso(puntos){
+  if(puntos<=0) return;
+  try{
+    await fetch('actualizar_progreso.php',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({experienciaGanada:puntos})
+    });
+  }catch(e){console.log('Error BD',e)}
+}
+
+function sumarXP(cantidad){
+  if(puntaje >= MAX_EXP) return 0;
+  let nuevo = puntaje + cantidad;
+  if(nuevo > MAX_EXP) nuevo = MAX_EXP;
+  let ganadoReal = nuevo - puntaje;
+  puntaje = nuevo;
+  return ganadoReal;
+}
+
+async function comprobar(){
+  const q=PREGUNTAS[indice];
+  if(respondido){ siguiente(); return; }
+  if(!seleccion){
+    const m=document.getElementById('mensaje');
+    m.style.display='block';
+    m.style.background='#fef3c7'; m.style.color='#92400e';
+    m.textContent='⚠️ Elige una primero, no te quito vida';
+    return;
+  }
+  let esCorrecta = (q.tipo==='texto') ? seleccion===q._correctaReal : seleccion===q.correcta;
+  respondido=true;
+  const m=document.getElementById('mensaje');
+  m.style.display='block';
+  if(esCorrecta){
+    correctas++;
+    let ganado = sumarXP(20);
+    racha++;
+    document.getElementById('puntaje').textContent = puntaje + '/100';
+    document.getElementById('racha').textContent = racha;
+    m.style.background='#d7ffb8'; m.style.color='#58a700';
+    if(puntaje >= MAX_EXP) m.textContent = `¡NIVEL MÁXIMO! 🏆 Llegaste a 100 XP`;
+    else m.textContent = `¡Correcto! +${ganado} XP 🎉`;
+    await guardarProgreso(ganado);
+  }else{
+    vidas--; racha=0;
+    document.getElementById('vidasTxt').textContent=`❤️ ${vidas}`;
+    document.getElementById('racha').textContent='0';
+    m.style.background='#ffdfe0'; m.style.color='#ff4b4b';
+    let resp = q.tipo==='texto'? q._correctaReal : q.correcta;
+    m.textContent=`Incorrecto, era ${resp} 😢 Te quedan ${vidas} vidas`;
+    if(vidas<=0){ setTimeout(()=>finJuego(true),800); return; }
+  }
+  document.getElementById('btnComprobar').textContent = (indice===PREGUNTAS.length-1)?'VER RESULTADO':'SIGUIENTE ➡️';
+}
+
+function siguiente(){
+  indice++;
+  if(indice>=PREGUNTAS.length) finJuego(false);
+  else cargarPregunta();
+}
+function saltar(){ siguiente(); }
+
+function finJuego(perdiste){
+  document.getElementById('fill').style.width='100%';
+  document.getElementById('juego').innerHTML=`
+    <div style="text-align:center;padding:30px 10px">
+      <div style="font-size:80px">${perdiste?'💔':'🏆'}</div>
+      <h1>${perdiste?'Te quedaste sin vidas':'¡Lección completada!'}</h1>
+      <p style="font-size:20px">Acertaste <b>${correctas} de ${PREGUNTAS.length}</b></p>
+      <div style="display:flex;gap:12px;justify-content:center;margin:20px 0;flex-wrap:wrap">
+        <div style="background:#fef3c7;padding:16px 24px;border-radius:16px"><div style="font-size:14px;color:#f59e0b;font-weight:900">XP GANADO</div><div style="font-size:32px;font-weight:900">⚡ ${Math.min(puntaje,100)}/100</div></div>
+        <div style="background:#d7ffb8;padding:16px 24px;border-radius:16px"><div style="font-size:14px;color:#58a700;font-weight:900">PORCENTAJE</div><div style="font-size:32px;font-weight:900">${Math.round(correctas/PREGUNTAS.length*100)}%</div></div>
+        <div style="background:#ddf4ff;padding:16px 24px;border-radius:16px"><div style="font-size:14px;color:#1cb0f6;font-weight:900">RACHA</div><div style="font-size:32px;font-weight:900">🔥 ${racha}</div></div>
+      </div>
+      <button class="verde" style="padding:16px 40px" onclick="location.reload()">🔄 JUGAR DE NUEVO</button>
+      <br><br><button onclick="location.href='index.html'">🏠 IR AL MENÚ</button>
+    </div>`;
+  document.querySelector('.botones').style.display='none';
+}
+cargarPregunta();
+</script>
+</body>
+</html>
